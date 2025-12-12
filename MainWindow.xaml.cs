@@ -5,41 +5,57 @@ using System.Windows;
 
 namespace MojeDzwieki
 {
-    public class Album(string artist, string title, int songsNumber, int year, int downloadNumber)
+    public class Album(string artist, string title, int songsNumber, int year, int downloadNumber) : INotifyPropertyChanged
     {
         public string Artist { get; set; } = artist;
         public string Title { get; set; } = title;
         public int SongsNumber { get; set; } = songsNumber;
         public int Year { get; set; } = year;
-        public int DownloadNumber { get; set; } = downloadNumber;
+        public int DownloadNumber
+        {
+            get => downloadNumber;
+            set
+            {
+                downloadNumber = value;
+                OnPropertyChanged(nameof(DownloadNumber));
+            }
+
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string name) 
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private readonly List<Album> _albums;
 
-        public Album CurrentAlbum { get; set; }
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private Album currentAlbum;
+
+        public Album CurrentAlbum
+        {
+            get { return currentAlbum; }
+            set
+            {
+                currentAlbum = value;
+                OnPropertyChanged();
+            }
+        }
 
         public MainWindow()
         {
             InitializeComponent();
 
             _albums = LoadData();
-            CurrentAlbum = _albums.First();
+            currentAlbum = _albums.First();
 
-            SetLabels();
-        }
-
-        private void SetLabels()
-        {
-            artistLbl.Content = CurrentAlbum.Artist;
-            downloadNumberLbl.Content = CurrentAlbum.DownloadNumber;
-            songsNumberLbl.Content = CurrentAlbum.SongsNumber + " utworów";
-            titleLbl.Content = CurrentAlbum.Title;
-            yearLbl.Content = CurrentAlbum.Year;
+            DataContext = this;
         }
 
         private static List<Album> LoadData()
@@ -73,7 +89,6 @@ namespace MojeDzwieki
                 index = 0;
 
             CurrentAlbum = _albums[index];
-            SetLabels();
         }
 
         private void PrevCommand(object sender, RoutedEventArgs e)
@@ -86,14 +101,16 @@ namespace MojeDzwieki
                 index = _albums.Count - 1;
 
             CurrentAlbum = _albums[index];
-            SetLabels();
         }
 
         private void DownloadCommand(object sender, RoutedEventArgs e)
         {
             _albums.First(x => x == CurrentAlbum).DownloadNumber++;
-            SetLabels();
+            OnPropertyChanged("DownloadNumber");
         }
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null!)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     }
 }

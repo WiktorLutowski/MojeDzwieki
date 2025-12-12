@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MojeDźwięki, Wykonał: Wiktor Lutowski" Height="250" Width="1000"
         Background="SeaGreen">
-    <Grid>
+    <Grid DataContext="{Binding CurrentAlbum}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="3*"/>
@@ -28,11 +28,11 @@
         <Image Source="/obraz.png" Grid.Column="1" Margin="10"/>
 
         <StackPanel Grid.Column="2">
-            <Label Foreground="white" FontSize="50" Name="artistLbl"/>
-            <Label Name="titleLbl" Foreground="white" FontSize="30" FontStyle="Italic"/>
+            <Label Foreground="white" FontSize="50" Content="{Binding Artist}"/>
+            <Label Content="{Binding Title}" Foreground="white" FontSize="30" FontStyle="Italic"/>
             <StackPanel Orientation="Horizontal">
-                <Label Name="songsNumberLbl" Foreground="#61D918" FontSize="20" Margin="0 0 10 0"/>
-                <Label Name="yearLbl" Foreground="#61D918" FontSize="20"/>
+                <Label Content="{Binding SongsNumber}" ContentStringFormat="{}{0} utworów" Foreground="#61D918" FontSize="20" Margin="0 0 10 0"/>
+                <Label Content="{Binding Year}" Foreground="#61D918" FontSize="20"/>
             </StackPanel>
         </StackPanel>
 
@@ -45,7 +45,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label VerticalAlignment="Top" Foreground="#61D918" FontSize="20" Name="downloadNumberLbl" Padding="0"/>
+            <Label VerticalAlignment="Top" Foreground="#61D918" FontSize="20" Content="{Binding DownloadNumber}" Padding="0"/>
             <Button Grid.Column="1" Background="#61D918" Content="Pobierz" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="5" FontSize="20" Margin="9,0,0,0" Click="DownloadCommand"/>
 
         </Grid>
